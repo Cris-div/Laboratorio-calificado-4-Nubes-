@@ -77,9 +77,9 @@ def index():
 
             opciones = {
                 "outtmpl": f"{DOWNLOAD_FOLDER}/{nombre}.%(ext)s",
-                # YouTube suele ofrecer video y audio por separado. Se prioriza
-                # MP4/M4A y ffmpeg los une en un único archivo MP4.
-                "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+                # Se prioriza AVC/H.264 con audio M4A: es el formato MP4 más
+                # compatible con el reproductor predeterminado de Windows.
+                "format": "bestvideo[vcodec^=avc][ext=mp4]+bestaudio[ext=m4a]/best[vcodec^=avc][ext=mp4]/best",
                 "merge_output_format": "mp4",
                 "noplaylist": True,
                 # YouTube requiere un runtime de JavaScript para resolver sus desafíos.
