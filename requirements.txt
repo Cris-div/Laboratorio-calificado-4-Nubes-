@@ -1,3 +1,5 @@
 Flask==3.0.0
-yt-dlp
+# curl-cffi permite a yt-dlp emular navegadores cuando una plataforma
+# protege sus páginas con huellas TLS (por ejemplo, TikTok).
+yt-dlp[default,curl-cffi]
 yt-dlp-ejs

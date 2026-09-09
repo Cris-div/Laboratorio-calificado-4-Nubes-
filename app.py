@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template_string, send_file
 import yt_dlp
 import os
+import subprocess
 import uuid
 
 app = Flask(__name__)
@@ -91,10 +92,26 @@ def index():
                 info = ydl.extract_info(url, download=True)
                 archivo = ydl.prepare_filename(info)
 
+            # Algunas plataformas entregan MP4 codificado con HEVC/H.265,
+            # que el reproductor de Windows no abre sin extensiones extra.
+            # Se genera una versión H.264/AAC compatible antes de enviarla.
+            nombre_base, _ = os.path.splitext(archivo)
+            archivo_compatible = f"{nombre_base}_compatible.mp4"
+            subprocess.run(
+                [
+                    "ffmpeg", "-y", "-i", archivo,
+                    "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+                    "-c:a", "aac", "-b:a", "192k",
+                    "-movflags", "+faststart", archivo_compatible,
+                ],
+                check=True,
+                capture_output=True,
+            )
+
             return send_file(
-                archivo,
+                archivo_compatible,
                 as_attachment=True,
-                download_name=os.path.basename(archivo)
+                download_name=os.path.basename(archivo_compatible)
             )
 
         except Exception as e:
