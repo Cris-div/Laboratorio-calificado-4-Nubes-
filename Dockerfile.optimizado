@@ -2,6 +2,9 @@ FROM python:3.11-alpine
 
 WORKDIR /app
 
+# yt-dlp usa Node.js para resolver los desafíos de JavaScript de YouTube.
+RUN apk add --no-cache ffmpeg nodejs && node --version && ffmpeg -version
+
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt

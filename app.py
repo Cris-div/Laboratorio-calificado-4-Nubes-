@@ -77,8 +77,14 @@ def index():
 
             opciones = {
                 "outtmpl": f"{DOWNLOAD_FOLDER}/{nombre}.%(ext)s",
-                "format": "best",
-                "noplaylist": True
+                # YouTube suele ofrecer video y audio por separado. Se prioriza
+                # MP4/M4A y ffmpeg los une en un único archivo MP4.
+                "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+                "merge_output_format": "mp4",
+                "noplaylist": True,
+                # YouTube requiere un runtime de JavaScript para resolver sus desafíos.
+                # Node.js se instala en las imágenes Docker del proyecto.
+                "js_runtimes": {"node": {}},
             }
 
             with yt_dlp.YoutubeDL(opciones) as ydl:
